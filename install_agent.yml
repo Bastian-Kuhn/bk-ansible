@@ -1,0 +1,13 @@
+---
+- hosts: all
+  vars:
+    - cmk_version: 2.1.1
+    - cmk_server: hostname-here
+    - cmk_site: sitename-here
+    - cmk_agent_hash: a39534b7b535674e
+    - cmk_windows_tmp: "C:\\Users\\Username\\AppData\\Local\\Temp"
+    - cmk_user: cmkadmin
+    - cmk_password: passwort
+
+  roles:
+    - cmk_host_agent

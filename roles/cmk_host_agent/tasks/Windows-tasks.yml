@@ -1,0 +1,40 @@
+---
+# Install Check_MK Agent on Windows
+
+- name: Get current agent version
+  win_shell: |
+      $cmk = "C:\Program Files (x86)\checkmk\service\check_mk_agent.exe"
+      If (Test-Path $cmk) {
+          (Get-Item $cmk).VersionInfo.ProductVersion
+          } Else {
+          "No agent installed"}
+  register: cmk_agent_version
+  changed_when: cmk_agent_version.stdout_lines[0] != cmk_version
+
+- name: Download agent -> {{ cmk_server }}/{{ cmk_site }}
+  win_get_url:
+      url: "https://{{ cmk_server }}/{{ cmk_site }}/check_mk/api/1.0/domain-types/agent/actions/download_by_hash/invoke?os_type=windows_msi&agent_hash={{ cmk_agent_hash }}"
+      dest: "{{ cmk_windows_tmp }}\\cmk_agent-{{ cmk_agent_hash }}.msi"
+      headers:
+        Authorization: "Bearer {{ cmk_user }} {{ cmk_password}}"
+        accept: "application/octet-stream"
+  when: cmk_agent_version.changed
+
+- name: Install agent -> cmk_agent-{{ cmk_agent_hash }}.msi
+  win_package:
+      path: "{{ cmk_windows_tmp }}\\cmk_agent-{{ cmk_agent_hash }}.msi"
+      arguments: /qn
+      state: present
+  when: cmk_agent_version.changed
+
+- name: Register Agent Trust Relation
+  win_command: "cmk-agent-ctl.exe register --hostname {{ inventory_hostname }} --server {{ cmk_server }} --site {{ cmk_site }} --user {{ cmk_user }} --password {{ cmk_password }}  --trust-cert"
+  args:
+    chdir: C:\\Program Files (x86)\\checkmk\service
+  register: output
+  when: cmk_agent_version.changed
+
+
+- name: Debug
+  debug:
+    var: output
