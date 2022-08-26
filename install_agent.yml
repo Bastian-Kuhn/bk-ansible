@@ -1,13 +1,22 @@
 ---
 - hosts: all
   vars:
-    - cmk_version: 2.1.1
-    - cmk_server: hostname-here
-    - cmk_site: sitename-here
-    - cmk_agent_hash: a39534b7b535674e
-    - cmk_windows_tmp: "C:\\Users\\Username\\AppData\\Local\\Temp"
-    - cmk_user: cmkadmin
-    - cmk_password: passwort
+
+    # This is the list of Variables which need to be set
+    # The CMDBsyncer will mange them Rulebased.
+    #- cmk_version: 2.1.0
+    #- cmk_server: cmk.prod.de
+    #- cmk_site: watoguiqs
+    #- cmk_agent_hash: a39534b1232235674e
+    #- cmk_windows_tmp: "C:\\Users\\CMK-Install\\AppData\\Local\\Temp"
+    #- cmk_linux_tmp: "/tmp"
+    #- cmk_user: cmkadmin
+    #- cmk_password: cmkg3h3im
+    #- cmk_install_agent: True
+    #- cmk_register_bakery: True
+    #- cmk_register_tls: True
+    #- cmk_delete_manual_files: False
+    #  -> Used it you have manual installed agent files and you want them removed
 
   roles:
     - cmk_host_agent
