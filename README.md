@@ -6,6 +6,8 @@ Also, the repo  it includes some useful roles to manage some tasks which I neede
  - Agent Installation, TLS and Bakery configuration for Windows and Linux (Currently Red Hat only, more will come)
  - Can be controlled by CMDBSyncer
  - User management on Linux
+ - Setting Server Defauls
+ - Settings iptables for Webservers
 
 
 ## Docu
