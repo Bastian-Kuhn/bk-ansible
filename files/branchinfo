@@ -1,0 +1,47 @@
+exec 2>/dev/null
+branch=$(git branch 2>/dev/null | fgrep '*' | cut -d' ' -f2)
+dirty=$(git status 2>/dev/null | wc -l)
+M=Makefile
+X=0
+while [ -z "$version" -a $X -lt 7 ]
+do
+  version=$(sed -n '/^OMD_VERSION[[:space:]]*=[[:space:]]*\(.*\) *$/s//\1/p' < "$M.omd")
+  if [ -z "$version" ] ; then
+      version=$(sed -n '/^VERSION[[:space:]]*=[[:space:]]*\(.*\) *$/s//\1/p' < "$M")
+      if [ "${version:0:1}" = '$' ] ; then version= ; fi
+  fi
+  M=../$M
+  X=$((X+1))
+done
+
+if [ "$branch" ]
+then
+    if [ -n "$version" ] ; then
+       if [ "$1" = -c ] ; then
+            echo -en '\033[1;44;37m'$version'\033[0m:'
+       else
+            echo -n "$version:"
+       fi
+    fi
+    if [ "$1" = -c ] ; then
+       if [ "$branch" = master ]
+       then
+           echo -en '\033[1;42;37m'$branch'\033[0m'
+       else
+           echo -en '\033[1;43;37m'$branch'\033[0m'
+       fi
+    else
+       echo -n "$branch"
+    fi
+    if [ "$dirty" != 4 ]
+    then
+      if [ "$1" = -c ] ; then
+          echo -en '\033[1;41;37m!\033[0m'
+      else
+          echo -en '!'
+      fi
+    fi
+    echo -n ' '
+fi
+
+

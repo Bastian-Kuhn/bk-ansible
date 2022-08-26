@@ -1,0 +1,8 @@
+---
+- hosts: *
+  vars:
+    - os_users: [
+        { short: bkuhn, comment: Bastian Kuhn, groups: "sudo", shell: "/bin/bash", state: present, key: True },
+      ]
+  roles:
+    - user

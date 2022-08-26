@@ -1,0 +1,20 @@
+---
+ - name: Create users
+   user:
+     name: "{{ item.short }}"
+     comment: "{{ item.comment }}"
+     state: "{{ item.state }}"
+     groups: "{{ item.groups }},users"
+     remove: yes
+     shell: "{{ item.shell }}"
+   with_items:
+     - "{{ os_users }}"
+
+ - name: Add authorized_key files
+   authorized_key:
+     user: "{{ item.short }}"
+     exclusive: yes
+     key: "{{ lookup('file', './files/keys/' + item.short) }}"
+   with_items:
+     - "{{ os_users }}"
+   when: item.key and item.state=='present'

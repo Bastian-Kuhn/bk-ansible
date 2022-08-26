@@ -1,0 +1,76 @@
+---
+ - name: Install default Packages
+   apt:
+     name: ['vim', 'fail2ban', 'apt-transport-https', 'etckeeper']
+     update_cache: yes
+
+ - name: Copy SSH Banner
+   copy: src=templates/issue.bkuhn dest=/etc mode=0644
+
+ - name: Setup SSH options
+   lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^{{ item.key }}.*"
+        line: "{{ item.key }} {{item.value }}"
+        insertbefore: Subsystem sftp.*
+        state: present
+   with_items:
+     - { key: PasswordAuthentication, value: "no" }
+     - { key: PermitRootLogin, value: "no" }
+     - { key: Protocol, value: "2" }
+     - { key: Banner, value: "/etc/issue.local" }
+     - { key: AllowGroups, value: "users root" }
+
+ - name: Setup fail2ban options
+   lineinfile:
+        dest: /etc/fail2ban/jail.conf
+        regexp: "^{{ item.key }}.*"
+        line: "{{ item.key }} = {{item.value }}"
+        state: present
+   with_items:
+     - { key: ignoreip, value: "127.0.0.1" }
+     - { key: bantime, value: "6000" }
+
+
+ - name: Copy configs
+   copy: src="files/{{ item }}" dest="/root/.{{  item }}"
+   with_items:
+     - vimrc
+
+ - name: Copy SSH RC
+   copy: src="files/ssh_rc" dest="/home/{{ item }}/.ssh/rc" mode=0744
+   with_items:
+     - bkuhn
+
+ - name: Copy configs for bk
+   copy: src="files/{{ item }}" dest="/home/bkuhn/.{{  item }}"
+   with_items:
+     - vimrc
+     - profile
+
+ - name: Add sudo configs
+   lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: "^%sudo"
+        line: "%sudo ALL=(ALL) NOPASSWD:ALL"
+
+ - name: Add auth sock to sudo configs
+   lineinfile:
+        dest: /etc/sudoers
+        insertafter: "^Defaults.*"
+        state: present
+        line: "Defaults        env_keep+=SSH_AUTH_SOCK"
+
+ - name: Remove default line in  sudo configs
+   lineinfile:
+        dest: /etc/sudoers
+        state: absent
+        line: "Defaults.*env_reset"
+
+ - name: Setup etckeeper
+   lineinfile:
+     dest: /etc/etckeeper/etckeeper.conf
+     regexp: "^VCS=.*"
+     line: VCS="git"
+   ignore_errors: yes
