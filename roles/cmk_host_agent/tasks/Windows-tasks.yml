@@ -2,8 +2,8 @@
 # Install Check_MK Agent on Windows
 - name: "Download Checkmk Agent."
   win_get_url:
-      url: "https://{{ cmk_server }}/{{ cmk_site }}/check_mk/api/1.0/domain-types/agent/actions/download_by_hash/invoke?os_type=windows_msi&agent_hash={{ cmk_agent_hash }}"
-      dest: "{{ cmk_windows_tmp }}\\cmk_agent-{{ cmk_agent_hash }}.msi"
+      url: "https://{{ cmk_server }}/{{ cmk_site }}/check_mk/api/1.0/domain-types/agent/actions/download_by_host/invoke?os_type=windows_msi&host_name={{ inventory_hostname }}"
+      dest: "{{ cmk_windows_tmp }}\\cmk_agent.msi"
       headers:
         Authorization: "Bearer {{ cmk_user }} {{ cmk_password}}"
         accept: "application/octet-stream"
@@ -11,7 +11,7 @@
 
 - name: "Install Checkmk Agent"
   win_package:
-      path: "{{ cmk_windows_tmp }}\\cmk_agent-{{ cmk_agent_hash }}.msi"
+      path: "{{ cmk_windows_tmp }}\\cmk_agent.msi"
       arguments: /qn
       state: present
   when: cmk_install_agent | bool

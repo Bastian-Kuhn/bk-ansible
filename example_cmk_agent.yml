@@ -7,7 +7,6 @@
     #- cmk_version: 2.1.0
     #- cmk_server: cmk.prod.de
     #- cmk_site: watoguiqs
-    #- cmk_agent_hash: a39534b1232235674e
     #- cmk_windows_tmp: "C:\\Users\\CMK-Install\\AppData\\Local\\Temp"
     #- cmk_linux_tmp: "/tmp"
     #- cmk_user: cmkadmin
