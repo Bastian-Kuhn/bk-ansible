@@ -28,7 +28,7 @@
 - name: "Install Checkmk Agent"
   become: true
   ansible.builtin.apt:
-    name: "{{ cmk_linux_tmp }}/cmk_agent.deb"
+    deb: "{{ cmk_linux_tmp }}/cmk_agent.deb"
     state: present
   when: cmk_install_agent and checkmk_agent_download_state.status == 200
 
