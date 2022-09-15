@@ -10,5 +10,18 @@ Also, the repo  it includes some useful roles to manage some tasks which I neede
  - Settings iptables for Webservers
 
 
+
+## Problems and Fixes
+
+### Distributed Monitoring, Agent Download from API
+Set Reverse Proxy in Apache:
+```
+SSLProxyEngine On
+SSLProxyCheckPeerCN off
+RewriteEngine On
+RewriteRules /sitename/check_mk/api/1.0/domain-types/agent/(.*)$ https://mastersite/sitename/check_mk/api/1.0/domain-types/$1 [P]
+```
+
+
 ## Docu
 [WIKI](https://github.com/Bastian-Kuhn/bk-ansible/wiki)
